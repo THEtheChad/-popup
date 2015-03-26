@@ -175,6 +175,7 @@
       initialize: function(attrs, opts){
         var model = this;
         
+        model._id = attrs._id;
         model.set('errors', []);
     
         model.on('change', function(details){
@@ -182,9 +183,8 @@
             _id: attrs._id,
             data: details.changed
           };
-          console.log('Element#change: ', message);
           Messenger.send('element.change', {
-            _id: attrs._id,
+            _id: model._id,
             data: details.changed
           })
         });
@@ -418,6 +418,7 @@
         });
 
         view.collection.on('add', function(m){
+          console.log('model added: ' + m);
           var eView = new ElementView({ model: m});
           m.view = eView;
 
@@ -485,7 +486,6 @@
         if(type == 'uploader') this.uploader();
 
         Messenger.on('element.add', function(data){
-          console.log('element.add: ', data);
           widget.list.add(data);
         });
     
