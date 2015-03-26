@@ -174,11 +174,11 @@
     return Backbone.Model.extend({
       initialize: function(attrs, opts){
         var model = this;
-        console.log('Element: ', this);
-
+        
         model.set('errors', []);
     
         model.on('change', function(details){
+          console.log('Element#change: ', details, details.changed);
           Messenger.send('element.change', {
             _id: attrs._id,
             data: details.changed
