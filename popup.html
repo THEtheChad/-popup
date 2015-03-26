@@ -415,7 +415,7 @@
 
         view.collection.on('add', function(m){
           var eView = new ElementView({ model: m});
-          m.set('view', eView);
+          m.view = eView;
 
           eView.$el.appendTo(view.$list);
 
@@ -423,7 +423,7 @@
         });
 
         view.collection.on('remove', function(m){
-          var eView = m.get('view');
+          var eView = m.view;
           eView.$el.remove();
 
           view.$count.html(view.collection.length);
