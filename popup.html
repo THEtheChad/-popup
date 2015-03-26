@@ -418,7 +418,6 @@
         });
 
         view.collection.on('add', function(m){
-          console.log('model added: ' + m);
           var eView = new ElementView({ model: m});
           m.view = eView;
 
