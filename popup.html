@@ -476,6 +476,9 @@
       initialize: function(type, target){
         var widget = this;
     
+        widget.name = decodeURIComponent(/name=(.*)$/.exec(document.location.search)[1]);
+        document.title = widget.name;
+    
         widget.template = $('#' + type).html();
         widget.$el.html(this.template);
 
