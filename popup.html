@@ -175,16 +175,16 @@
       initialize: function(attrs, opts){
         var model = this;
         
-        model._id = attrs._id;
+        model.id = attrs.id;
         model.set('errors', []);
     
         model.on('change', function(details){
           var message = {
-            _id: attrs._id,
+            id: attrs.id,
             data: details.changed
           };
           Messenger.send('element.change', {
-            _id: model._id,
+            id: model.id,
             data: details.changed
           })
         });
