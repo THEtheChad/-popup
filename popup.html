@@ -516,6 +516,7 @@
         var list = this.list;
 
         $search.on('keyup', function(){
+          list.reset();
           Messenger.send('find', $search.val());
         });
 
