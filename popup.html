@@ -318,10 +318,10 @@
           .append(view.$controls)
           .append(view.$inputs)
           .append(view.$tagui)
-          .on('mouseover', function(){
+          .on('mouseenter', function(){
             view.highlight(true)
           })
-          .on('mouseout', function(){
+          .on('mouseleave', function(){
             view.highlight(false)
           });
       },
