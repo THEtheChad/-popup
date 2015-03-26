@@ -318,11 +318,15 @@
           .append(view.$controls)
           .append(view.$inputs)
           .append(view.$tagui)
+          .on('mouseover', function(){
+            view.highlight(true)
+          })
+          .on('mouseout', function(){
+            view.highlight(false)
+          });
       },
       events: {
         'click .element__selected': 'select',
-        'mouseover .element': function(){ this.highlight(true) },
-        'mouseout .element' : function(){ this.highlight(false) },
         'click .element__class': function(e){
           this.triggerSelector('class', this.$(e.target).html())
         },
