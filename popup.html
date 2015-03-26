@@ -321,8 +321,8 @@
       },
       events: {
         'click .element__selected': 'select',
-        'mouseover': function(){ this.highlight(true) },
-        'mouseout' : function(){ this.highlight(false) },
+        'mouseover .element': function(){ this.highlight(true) },
+        'mouseout .element' : function(){ this.highlight(false) },
         'click .element__class': function(e){
           this.triggerSelector('class', this.$(e.target).html())
         },
