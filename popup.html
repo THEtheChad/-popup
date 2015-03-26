@@ -178,7 +178,11 @@
         model.set('errors', []);
     
         model.on('change', function(details){
-          console.log('Element#change: ', details, details.changed);
+          var message = {
+            _id: attrs._id,
+            data: details.changed
+          };
+          console.log('Element#change: ', message);
           Messenger.send('element.change', {
             _id: attrs._id,
             data: details.changed
