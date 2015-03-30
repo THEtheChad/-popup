@@ -1,0 +1,308 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <style>
+  *{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
+  body{
+    overflow-y: scroll;
+  }
+  .widget{
+    padding: 15px;
+  }
+  .fa{
+    color: #777;
+    font-size: 16px;
+  }
+  .fa:hover{
+    color: #333;
+  }
+  .highlight{
+    background: #f1e5ac !important;
+  }
+  #target__search{
+    padding: 5px;
+  }
+  .element-list{
+    margin-top: 5px;
+  }
+  .element-list__controls{
+    padding: 5px;
+    border: 1px solid #ddd;
+    margin-bottom: 4px;
+  }
+  .element-list__controls .control{
+    margin-right: 5px;
+  }
+  .element-list__count{
+    float: right;
+  }
+  .element-list__download{
+    float: right;
+    position: relative;
+    top: 2px;
+    cursor: pointer;
+  }
+  .element-list__elements{
+  }
+  .element-list__elements .element{
+    margin-bottom: 4px;
+  }
+  .element{
+    position: relative;
+    padding: 5px;
+    border: 1px solid #ccc;
+    background: #CACFCF;
+    opacity: .8;
+  }
+  .element__tag-name,
+  .element__class,
+  .element__id{
+    padding: 2px 8px 4px;
+    text-transform: lowercase;
+    color: #fff;
+    display: inline-block;
+    margin-right: 2px;
+    margin-bottom: 4px;
+    cursor: pointer;
+    transition: all .5s;
+  }
+  .element__tag-name{
+    background: #9BB4B4;
+  }
+  .element__tag-name:hover{
+    background: #5e7d7d;
+  }
+  .element__class{
+    background: #C9B07D;
+  }
+  .element__class:hover{
+    background: #7a6333;
+  }
+  .element__id{
+    background: #C97D7D;
+  }
+  .element__id:hover{
+    background: #893939;
+  }
+  .element:hover{
+    opacity: 1;
+  }
+  .element__selected{
+    margin-right: 5px;
+    cursor: pointer;
+  }
+  .element-list__select-all{
+    cursor: pointer;
+  }
+  .element__tag-ui{
+    margin-top: 4px;
+    margin-bottom: -4px;
+  }
+  .element__data{
+    width: 120px;
+    padding: 4px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .element-inputs{
+    margin-top: 20px;
+  }
+  .element-inputs input{
+    background: none;
+    border: none;
+    position: relative;
+  }
+  .element-inputs input:hover,
+  .element-inputs input:focus{
+    outline: 1px solid #aaa;
+    background: #ddd;
+    z-index: 1;
+  }
+  .element-inputs:focus{
+    outline: 0;
+  }
+  .element-inputs label{
+    display: inline-block;
+    width: 80px;
+  }
+  .element__controls{
+    position: absolute;
+    right: 0;
+  }
+  .element__control:hover{
+    cursor: pointer;
+  }
+  .element__controls .element__control{
+    margin-right: 5px;
+  }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.16/require.min.js"></script>
+</head>
+<body>
+  <script id="search" type="text/template">
+    <div><input class="search" type="text" placeholder="CSS Selector"></div>
+    <div class="match-list"></div>
+  </script>
+
+  <script id="uploader" type="text/template">
+    <div><input class="file-upload" type="file" multiple></div>
+    <div class="match-list"></div>
+  </script>
+
+  <script>
+  requirejs.config({
+    paths: {
+      'jquery': 'https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min',
+      'backbone': 'https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min',
+      'underscore': 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min'
+    },
+    shim: {
+        'backbone': {
+            deps: ['underscore', 'jquery'],
+            exports: 'Backbone'
+        },
+        'underscore': {
+            exports: '_'
+        }
+    }
+  });
+
+  define('Element', ['backbone'], function(Backbone){
+    return Backbone.Model.extend({
+      initialize: function(attrs){
+        var element = this;
+      },
+      sync: function(){
+        console.log(this, arguments)
+      },
+      select: function(state){
+        if(state == undefined) state = !this.get('selected');
+    
+        this.set('selected', state);
+      },
+      highlight: function(state){
+        if(state == undefined) state = !this.get('highlighted');
+        if(this.get('selected') == true) state = true;
+    
+        this.set('highlighted', state);
+      },
+      toCsv: function(){
+        var record = [];
+    
+        record.push(this.get('name'));
+        record.push(this.get('preferred'));
+        record.push(this.get('comment'));
+    
+        return record.join(',');
+      }
+    });
+  });  
+
+  define('ElementList', ['backbone'], function(Backbone){
+    return Backbone.Collection.extend({
+      model: Element,
+      initialize: function(list, opts){
+        var collection = this;
+    
+        collection.messenger = opts.messenger;
+        
+        collection.state = new Backbone.Model({
+          selected_count: 0
+        });
+    
+        collection.on('change:selected', function(m, selected){
+          var count = collection.state.get('selected_count');
+    
+          selected ? collection.state.set('selected_count', ++count) : collection.state.set('selected_count', --count);
+        });
+    
+        collection.on('reset', function(collection, changes){
+          // deselect all elements
+          _.each(changes.previousModels, function(element){
+            element.select(false);
+          });
+    
+          // reset selection count
+          collection.state.set('selected_count', 0);
+        });
+        
+        if(collection.messenger){
+          var recieved = false;
+          
+          collection.messenger.on('element.add', function(node){
+            recieved = true;
+            collection.add(node);
+          });
+          
+          collection.messenger.on('element.remove', function(node){
+            recieved = true;
+            collection.remove(node);
+          });
+          
+          collection.on('add', function(model){
+            if(recieved) return recieved = false;
+            collection.messenger.send('element.add', model.attributes)
+          });
+    
+          collection.on('remove', function(model){
+            if(recieved) return recieved = false;
+            collection.messenger.send('element.remove', model.toJSON())
+          });
+        }
+      }
+    });
+  });  
+
+  define('Messenger', ['underscore', 'jquery'], function(_, $){
+    function Messenger(params){
+      _.extend(this, {
+        identifier: 'global',
+        target: window.opener,
+        subject: window,
+        restrictions: '*'
+      }, params);
+    }
+    Messenger.prototype = {
+      on: function(event, fn){
+        var identifier = this.identifier;
+        $(this.subject).on('message', function(e){
+          var message = e.originalEvent.data;
+          if(message.event != event) return;
+          if(message.identifier != identifier) return;
+          fn(message.data);
+        });
+      },
+      send: function(event, data){
+        console.log('sending:', event, data); return;
+        
+        this.target.postMessage({
+          identifier: this.identifier,
+          event: event,
+          data: data
+        }, this.restrictions);
+      }
+    };
+    return Messenger;
+  });
+
+  define('Client', function(){
+  
+  });
+
+  require(['Widget'], function(Widget){
+    var query = document.location.search.slice(1);
+
+    if(/widget=search/.test(query)) new Widget('search', 'body');
+    else
+    if(/widget=uploader/.test(query)) new Widget('uploader', 'body');
+  });
+  </script>
+
+</body>
+</html>
