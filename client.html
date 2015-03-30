@@ -274,28 +274,6 @@
         });
     });
 
-    define('ElementListView', ['backbone', 'jquery'], function(Backbone, $){
-        return Backbone.View.extend({
-            initialize: function(){
-                var view = this;
-
-                function eleId(m){ return m.get('id') + '-element' }
-
-                view.collection.on('add', function(m){
-                    var $tag = $('<div>' + m.get('tagName') + '</div>');
-                    $tag.attr('id', eleId(m));
-                    view.$el.append($tag);
-                });
-
-                view.collection.on('remove', function(m){
-                    $('#' + eleId(m)).remove();
-                });
-
-                view.$el.appendTo('body');
-            }
-        })
-    });
-
     define('Messenger', ['underscore', 'jquery'], function(_, $){
         function Messenger(params){
             var messenger = this;
@@ -349,6 +327,186 @@
         };
         return Messenger;
     });
+
+    define('ElementView', ['jquery', 'backbone'], function($, Backbone){
+        return Backbone.View.extend({
+          className: 'element',
+        
+          initialize: function(){
+            var view = this;
+        
+            view.listenTo(this.model, 'change:selected', function(m, state){
+              this.$select.toggleClass('fa-eye-slash', !state);
+              this.$select.toggleClass('fa-eye', state);
+        
+              this.highlight(state);
+            });
+        
+            view.$controls = $('<div class="element__controls"></div>');
+            view.$select = $('<i class="fa fa-eye-slash element__selected element__control"></i>').appendTo(view.$controls);
+            view.$save = $('<i class="fa fa-floppy-o element__control"></i>').appendTo(view.$controls);
+        
+            view.$inputs = $('<div class="element-inputs"></div>');
+        
+            view.$nameQuery = $('<div class="element-inputs__name"><label>Name</label></div>').appendTo(view.$inputs);
+            view.$name = $('<input class="element__name element__data" type="text" placeholder="unknown">').appendTo(view.$nameQuery);
+        
+            view.bind(view.$name, 'name');
+        
+            view.$selectorQuery = $('<div class="element-inputs__name"><label>Selector</label></div>').appendTo(view.$inputs);
+            view.$selector = $('<span class="element__selector element__data"></span>').appendTo(view.$selectorQuery);
+        
+            view.$selector.html(view.model.get('selector'));
+        
+            view.$preferredQuery = $('<div class="element-inputs__name"><label>Preferred</label></div>').appendTo(view.$inputs);
+            view.$preferred = $('<span class="element__preferred element__data">unavailable</span>').appendTo(view.$preferredQuery);
+        
+            view.$preferred.html(view.model.get('preferred'));
+        
+            view.$tagui = $('<div class="element__tag-ui"></div>');
+        
+            view.$tag = view.model.get('tagName') && $('<div class="element__tag-name">' + view.model.get('tagName') + '</div>').appendTo(view.$tagui);
+            view.$id = view.model.get('tagId') && $('<div class="element__id">#' + view.model.get('tagId') + '</div>').appendTo(view.$tagui);
+        
+            var classes = view.model.get('classNames');
+            if(classes.length){
+              view.$classes = $.map(classes, function(className){
+                return $('<div class="element__class">.' + className + '</div>');
+              });
+              view.$tagui.append(view.$classes);
+            }
+        
+            view.$el
+              .append(view.$controls)
+              .append(view.$inputs)
+              .append(view.$tagui)
+              .on('mouseenter', function(){
+                view.highlight(true)
+              })
+              .on('mouseleave', function(){
+                view.highlight(false)
+              });
+          },
+          events: {
+            'click .element__selected': 'select',
+            'click .element__class': function(e){
+              this.triggerSelector('class', this.$(e.target).html())
+            },
+            'click .element__id': function(e){
+              this.triggerSelector('id', this.$(e.target).html())
+            },
+            'click .element__tag-name': function(e){
+              this.triggerSelector('tagName', this.$(e.target).html())
+            }
+          },
+          triggerSelector: function(selector_type, selector){
+              var model = this.model;
+              var changes = {};
+        
+              changes[selector_type] = selector;
+        
+              model.trigger('selector:' + selector_type, model, selector);
+              model.trigger('selector', model, changes);
+          },
+          highlight: function(state, backbone_state){
+            if(_.isBoolean(backbone_state)) state = backbone_state;
+        
+            this.model.highlight(state);
+          },
+          select: function(state, backbone_state){
+            if(state && state.type == 'click') state = undefined;
+            else
+            if(_.isBoolean(backbone_state)) state = backbone_state;
+        
+            this.model.select(state);
+          },
+          bind: function($ele, prop){
+            var model = this.model;
+            function bind(m, value){ $ele.val(value) }
+        
+            bind(model, model.get(prop));
+            model.on('change:' + prop, bind);
+        
+            $ele.keyup(function(){
+              model.set(prop, $ele.val());
+            });
+          }
+        });
+    });
+    
+    define('ElementListView', ['backbone', 'ElementView', 'jquery'], function(Backbone, ElementView, $){
+        return Backbone.View.extend({
+          className: 'element-list',
+          initialize: function(attrs){
+            var view = this;
+        
+            view.$el.addClass(this.className);
+        
+            // add controls
+            view.$controls = $('<div class="element-list__controls"></div>');
+            view.$select_all = $('<i class="element-list__select-all control fa fa-eye-slash"></i>').appendTo(view.$controls);
+            view.$selected_count = $('<span class="element-list__selected-count">0</span>').appendTo(view.$controls);
+            // <input class="element-list__select-all control" type="checkbox">
+            view.$count =  $('<span class="element-list__count">0</span>').appendTo(view.$controls);
+        
+            if(attrs.download){
+              view.$download = $('<i class="element-list__download control fa fa-download"></i>').appendTo(view.$controls);
+        
+              view.$download.click(function(){
+                var csv = view.collection.toCsv();
+        
+                console.log(csv);
+              });
+            }
+        
+            view.$controls.appendTo(view.$el);
+        
+            // add list
+            view.$list = $('<div class="element-list__elements"></div>').appendTo(view.$el);
+        
+            // ## EVENTS
+        
+            view.$select_all.click(function(){
+              var selected = !view.$select_all.hasClass('fa-eye');
+        
+              view.collection.each(function(m){
+                m.select(selected);
+              });
+            });
+        
+            view.collection.state.on('change:selected_count', function(state, count){
+              view.$selected_count.html(count);
+        
+              var state = (count == view.collection.length);
+        
+              view.$select_all.toggleClass('fa-eye-slash', !state);
+              view.$select_all.toggleClass('fa-eye', state);
+            });
+        
+            view.collection.on('add', function(m){
+              var eView = new ElementView({ model: m});
+              m.view = eView;
+        
+              eView.$el.appendTo(view.$list);
+        
+              view.$count.html(view.collection.length);
+            });
+        
+            view.collection.on('remove', function(m){
+              var eView = m.view;
+              eView.$el.remove();
+        
+              view.$count.html(view.collection.length);
+            });
+        
+            view.collection.on('reset', function(){
+              view.$list.html('');
+        
+              view.$count.html(view.collection.length);
+            });
+          }
+        });
+    });  
 
     define('Client', ['ElementList', 'Messenger', 'ElementListView'], function(ElementList, Messenger, ElementListView){
         function Client(){
