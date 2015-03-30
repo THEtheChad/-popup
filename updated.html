@@ -107,7 +107,29 @@
         }
       }
     });
-  });  
+  });
+  
+  define('ElementListView', ['backbone', 'jquery'], function(Backbone, $){
+    return Backbone.View.extend({
+      initialize: function(){
+        var view = this;
+        
+        function eleId(m){ return m.get('id') + '-element' }
+        
+        view.collection.on('add', function(m){
+          var $tag = $('<div>' + m.get('tagName') + '</div>');
+          $tag.attr('id', eleId(m));
+          view.$el.append($tag);
+        });
+        
+        view.collection.on('remove', function(m){
+          $('#' + eleId(m)).remove();
+        });
+        
+        view.$el.appendTo('body');
+      }
+    })
+  });
 
   define('Messenger', ['underscore', 'jquery'], function(_, $){
     function Messenger(params){
@@ -142,7 +164,7 @@
     return Messenger;
   });
 
-  define('Client', ['ElementList', 'Messenger'], function(ElementList, Messenger){
+  define('Client', ['ElementList', 'Messenger', 'ElementListView'], function(ElementList, Messenger, ElementListView){
     function Client(){
       var client = this;
       
@@ -153,6 +175,10 @@
       
       client.list = new ElementList([], {
         messenger: client.messenger
+      });
+      
+      client.view = new ElementListView({
+        collection: client.list
       });
     }
     return Client;
