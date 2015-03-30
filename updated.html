@@ -86,6 +86,7 @@
           var recieved = false;
           
           collection.messenger.on('element.add', function(node){
+            console.log('list: adding element', node);
             recieved = true;
             collection.add(node);
           });
