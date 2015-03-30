@@ -169,7 +169,7 @@
       var client = this;
       
       var querystr = document.location.search.splice(1);
-      var pairs = querystr.split(&);
+      var pairs = querystr.split('&');
       var query = {};
       pairs.forEach(function(pair){
         var tokens = pair.split('=');
