@@ -11,10 +11,13 @@
         }
         body{
             overflow-y: scroll;
-            padding: 20px;
         }
         .widget{
             padding: 15px;
+        }
+        .widget .search{
+            width: 100%;
+            padding: 8px;
         }
         .fa{
             color: #777;
@@ -164,6 +167,23 @@
         }
     });
 
+    define('CSV', ['underscore'], function(_){
+        /**
+         * @param {Array} list
+         * @param {Array} fields
+         * @return {Array}
+         */
+        function CSV(list, fields){
+            return _.map(list, function(record){
+                return _.map(fields, function(field){
+                    return record[field];
+                }).join(',');
+            }).join('\n');
+        }
+
+        return CSV;
+    });
+
     define('Element', ['backbone'], function(Backbone){
         return Backbone.Model.extend({
             initialize: function(attrs){
@@ -271,6 +291,9 @@
                         model.set(message.changed);
                     });
                 }
+            },
+            toCSV: function(){
+
             }
         });
     });
