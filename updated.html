@@ -291,16 +291,28 @@
     return Messenger;
   });
 
-  define('Client', function(){
-  
+  define('Client', ['ElementList', 'Messenger'], function(ElementList, Messenger){
+    function Client(){
+      var client = this;
+      
+      client.name = decodeURIComponent(/name=(.*)$/.exec(document.location.search)[1]);
+      client.messenger = new Messenger({
+        identifier: client.name
+      });
+      
+      client.list = new ElementList([], {
+        messenger: client.messenger
+      });
+    }
+    return Client;
   });
 
-  require(['Widget'], function(Widget){
-    var query = document.location.search.slice(1);
-
-    if(/widget=search/.test(query)) new Widget('search', 'body');
-    else
-    if(/widget=uploader/.test(query)) new Widget('uploader', 'body');
+  require(['Client'], function(Client){
+    var client = new Client();
+    
+    client.list.on('all', function(){
+      console.log(arguments);
+    });
   });
   </script>
 
