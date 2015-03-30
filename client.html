@@ -536,7 +536,7 @@
 
                 view.$search = $('<input class="search" type="text" placeholder="CSS Selector">')
                     .on('keyup', function(){
-                        view.messenger.send('find', $search.val());
+                        view.messenger.send('find', view.$search.val());
                     })
                     .appendTo(view.$el);
 
