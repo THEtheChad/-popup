@@ -290,6 +290,10 @@
                         recieved(model);
                         model.set(message.changed);
                     });
+
+                    collection.on('goto', function(model){
+                        collection.messenger.send('goto', model.id);
+                    });
                 }
             },
             toCSV: function(){
@@ -369,8 +373,13 @@
                 });
 
                 view.$controls = $('<div class="element__controls"></div>');
+                view.$goto = $('<i class="fa fa-external-link-square"></i>').appendTo(view.$controls);
                 view.$select = $('<i class="fa fa-eye-slash element__selected element__control"></i>').appendTo(view.$controls);
                 view.$save = $('<i class="fa fa-floppy-o element__control"></i>').appendTo(view.$controls);
+
+                view.$goto.click(function(){
+                    view.model.trigger('goto', view.model);
+                });
 
                 view.$inputs = $('<div class="element-inputs"></div>');
 
