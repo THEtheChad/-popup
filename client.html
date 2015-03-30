@@ -158,23 +158,44 @@
 
     define('Messenger', ['underscore', 'jquery'], function(_, $){
         function Messenger(params){
-            _.extend(this, {
+            var messenger = this;
+            
+            _.extend(messenger, {
                 channel: 'global',
                 target: window.opener,
                 subject: window,
                 restrictions: '*'
             }, params);
+            
+            if(messenger.debug){
+                console.log('Creating messenger...');
+                console.log('channel: ', messenger.channel);
+                console.log('target: ', messenger.target);
+                console.log('subject: ', messenger.subject);
+                console.log('restrictions: ', messenger.restrictions);
+                console.log('');
+            }
         }
         Messenger.prototype = {
             on: function(event, fn){
-                var channel = this.channel;
-                $(this.subject).on('message', function(e){
+                var messenger = this;
+                var channel = messenger.channel;
+                $(messenger.subject).on('message', function(e){
                     var message = e.originalEvent.data;
-                    console.log('message recieved\n---\nevent: ' + message.event + '\nchannel: ' + message.channel + '\nlistening: ' + channel + '\ndata:', message.data);
                     if(message.event != event) return;
                     if(message.channel != channel) return;
+                    if(messenger.debug){
+                        console.log('Message recieved!');
+                        console.log('event: ', message.event);
+                        console.log('channel: ', message.channel);
+                        console.log('data: ', message.data);
+                        console.log('');
+                    }
                     fn(message.data);
                 });
+                if(messenger.debug){
+                    console.log('Listening for ' + event + ' on channel ' + channel);
+                }
             },
             send: function(event, data){
                 console.log('sending:', event, data);
@@ -207,7 +228,8 @@
 
             client.name = query.name;
             client.messenger = new Messenger({
-                channel: client.name
+                channel: client.name,
+                debug: true
             });
 
             client.list = new ElementList([], {
