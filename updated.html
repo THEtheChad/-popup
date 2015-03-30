@@ -168,7 +168,19 @@
     function Client(){
       var client = this;
       
-      client.name = decodeURIComponent(/name=(.*)$/.exec(document.location.search)[1]);
+      var querystr = document.location.search.splice(1);
+      var pairs = querystr.split(&);
+      var query = {};
+      pairs.forEach(function(pair){
+        var tokens = pair.split('=');
+        
+        var key = decodeURIComponent(tokens[0]);
+        var value = decodeURIComponent(tokens[1]);
+        
+        query[key] = value;
+      });
+      
+      client.name = query.name;
       client.messenger = new Messenger({
         channel: client.name
       });
