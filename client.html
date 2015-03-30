@@ -585,7 +585,7 @@
                             var reader = new FileReader();
                             reader.onload = function(e){
                                 var csv = e.target.result;
-                                view.collection.fromCsv(csv);
+                                view.collection.fromCSV(csv);
                             };
                             reader.readAsText(file);
                         });
