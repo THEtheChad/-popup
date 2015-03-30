@@ -287,10 +287,10 @@
 
             if(messenger.debug){
                 console.groupCollapsed('Creating messenger...');
-                console.log('channel: ', messenger.channel);
-                console.log('target: ', messenger.target);
-                console.log('subject: ', messenger.subject);
-                console.log('restrictions: ', messenger.restrictions);
+                console.log('channel:', messenger.channel);
+                console.log('target:', messenger.target);
+                console.log('subject:', messenger.subject);
+                console.log('restrictions:', messenger.restrictions);
                 console.groupEnd();
             }
         }
@@ -312,7 +312,7 @@
                     fn(message.data);
                 });
                 if(messenger.debug){
-                    console.log('Listening for ' + event + ' on channel ' + channel);
+                    console.log('Listening for ' + event + ' on channel `' + channel + '`');
                 }
             },
             send: function(event, data){
