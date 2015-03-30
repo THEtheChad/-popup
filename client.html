@@ -527,8 +527,7 @@
 
             client.name = query.name;
             client.messenger = new Messenger({
-                channel: client.name,
-                debug: true
+                channel: client.name
             });
 
             client.list = new ElementList([], {
