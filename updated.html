@@ -159,6 +159,7 @@
   });
 
   require(['Client'], function(Client){
+    console.log('starting client...');
     var client = new Client();
     
     client.list.on('all', function(){
