@@ -317,7 +317,9 @@
                 }
             },
             send: function(event, data){
-                console.log('sending:', event, data);
+                if(this.debug){
+                    console.log('sending:', event, data);
+                }
 
                 this.target.postMessage({
                     channel: this.channel,
