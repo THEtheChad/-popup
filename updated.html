@@ -54,7 +54,7 @@
     });
   });  
 
-  define('ElementList', ['backbone'], function(Backbone){
+  define('ElementList', ['backbone', 'Element'], function(Backbone, Element){
     return Backbone.Collection.extend({
       model: Element,
       initialize: function(list, opts){
@@ -86,7 +86,6 @@
           var recieved = false;
           
           collection.messenger.on('element.add', function(node){
-            console.log('list: adding element', node);
             recieved = true;
             collection.add(node);
           });
