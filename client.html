@@ -142,10 +142,6 @@
         .element__controls .element__control{
             margin-right: 5px;
         }
-        .search{
-            padding: 5px 10px;
-            width: 100%;
-        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.16/require.min.js"></script>
 </head>
@@ -515,7 +511,44 @@
         });
     });
 
-    define('Client', ['ElementList', 'Messenger', 'ElementListView'], function(ElementList, Messenger, ElementListView){
+    define('Widget', ['backbone', 'ElementList', 'Messenger', 'ElementListView', 'jquery'], function(Backbone, ElementList, Messenger, ElementListView, $){
+        return Backbone.View.extend({
+            className: 'widget',
+            initialize: function(opts){
+                var view = this;
+
+                view.collection = new ElementList([], {
+                   messenger: opts.messenger
+                });
+
+                if(opts.type == 'search') view.search();
+
+                view.element_list = new ElementListView({
+                    collection: view.collection
+                });
+                view.$el.append(view.element_list.$el);
+
+                view.$el.appendTo(opts.target);
+            },
+            search: function(){
+                var view = this;
+
+                view.$search = $('<input class="search" type="text" placeholder="CSS Selector">')
+                    .on('keyup', function(){
+                        client.messenger.send('find', $search.val());
+                    })
+                    .appendTo(view.$el);
+
+                view.collection.on('selector', function(m, list){
+                    var selectors = [];
+                    for(var k in list) selectors.push(list[k])
+                    $search.val(selectors.join('')).triggerHandler('keyup');
+                });
+            }
+        });
+    });
+
+    define('Client', ['Widget'], function(Widget){
         function Client(){
             var client = this;
 
@@ -536,28 +569,13 @@
                 channel: client.name
             });
 
-            client.list = new ElementList([], {
-                messenger: client.messenger
-            });
-
-            client.view = new ElementListView({
-                collection: client.list
-            });
-
             if(query.type == 'search'){
-                var $search = $('<input class="search" type="text" placeholder="CSS Selector">').appendTo('body');
-                $search.on('keyup', function(){
-                    client.messenger.send('find', $search.val());
-                });
-
-                client.list.on('selector', function(m, list){
-                    var selectors = [];
-                    for(var k in list) selectors.push(list[k])
-                    $search.val(selectors.join('')).triggerHandler('keyup');
+                new Widget({
+                    type: 'search',
+                    target: 'body',
+                    messenger: client.messenger
                 });
             }
-
-            client.view.$el.appendTo('body');
         }
         return Client;
     });
