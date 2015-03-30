@@ -1,210 +1,219 @@
 <!doctype html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.16/require.min.js"></script>
+    <meta charset="UTF-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.16/require.min.js"></script>
 </head>
 <body>
-  <script>
-  requirejs.config({
-    paths: {
-      'jquery': 'https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min',
-      'backbone': 'https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min',
-      'underscore': 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min'
-    },
-    shim: {
-        'backbone': {
-            deps: ['underscore', 'jquery'],
-            exports: 'Backbone'
+<script>
+    requirejs.config({
+        paths: {
+            'jquery': 'https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min',
+            'backbone': 'https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min',
+            'underscore': 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min'
         },
-        'underscore': {
-            exports: '_'
+        shim: {
+            'backbone': {
+                deps: ['underscore', 'jquery'],
+                exports: 'Backbone'
+            },
+            'underscore': {
+                exports: '_'
+            }
         }
-    }
-  });
-
-  define('Element', ['backbone'], function(Backbone){
-    return Backbone.Model.extend({
-      initialize: function(attrs){
-        var element = this;
-      },
-      sync: function(){
-        console.log(this, arguments)
-      },
-      select: function(state){
-        if(state == undefined) state = !this.get('selected');
-    
-        this.set('selected', state);
-      },
-      highlight: function(state){
-        if(state == undefined) state = !this.get('highlighted');
-        if(this.get('selected') == true) state = true;
-    
-        this.set('highlighted', state);
-      },
-      toCsv: function(){
-        var record = [];
-    
-        record.push(this.get('name'));
-        record.push(this.get('preferred'));
-        record.push(this.get('comment'));
-    
-        return record.join(',');
-      }
     });
-  });  
 
-  define('ElementList', ['backbone', 'Element'], function(Backbone, Element){
-    return Backbone.Collection.extend({
-      model: Element,
-      initialize: function(list, opts){
-        var collection = this;
-    
-        collection.messenger = opts.messenger;
-        
-        collection.state = new Backbone.Model({
-          selected_count: 0
+    define('Element', ['backbone'], function(Backbone){
+        return Backbone.Model.extend({
+            initialize: function(attrs){
+                var element = this;
+            },
+            sync: function(){
+                console.log(this, arguments)
+            },
+            select: function(state){
+                if(state == undefined) state = !this.get('selected');
+
+                this.set('selected', state);
+            },
+            highlight: function(state){
+                if(state == undefined) state = !this.get('highlighted');
+                if(this.get('selected') == true) state = true;
+
+                this.set('highlighted', state);
+            },
+            toCsv: function(){
+                var record = [];
+
+                record.push(this.get('name'));
+                record.push(this.get('preferred'));
+                record.push(this.get('comment'));
+
+                return record.join(',');
+            }
         });
-    
-        collection.on('change:selected', function(m, selected){
-          var count = collection.state.get('selected_count');
-    
-          selected ? collection.state.set('selected_count', ++count) : collection.state.set('selected_count', --count);
+    });
+
+    define('ElementList', ['backbone', 'Element'], function(Backbone, Element){
+        return Backbone.Collection.extend({
+            model: Element,
+            initialize: function(list, opts){
+                var collection = this;
+
+                collection.messenger = opts.messenger;
+
+                collection.state = new Backbone.Model({
+                    selected_count: 0
+                });
+
+                collection.on('change:selected', function(m, selected){
+                    var count = collection.state.get('selected_count');
+
+                    selected ? collection.state.set('selected_count', ++count) : collection.state.set('selected_count', --count);
+                });
+
+                collection.on('reset', function(collection, changes){
+                    // deselect all elements
+                    _.each(changes.previousModels, function(element){
+                        element.select(false);
+                    });
+
+                    // reset selection count
+                    collection.state.set('selected_count', 0);
+                });
+
+                if(collection.messenger){
+                    var recieved = false;
+
+                    collection.on('add', function(model){
+                        if(recieved) return recieved = false;
+                        collection.messenger.send('element.add', model.attributes)
+                    });
+
+                    collection.on('remove', function(model){
+                        if(recieved) return recieved = false;
+                        collection.messenger.send('element.remove', model.toJSON())
+                    });
+
+                    collection.on('change', function(model){
+                        if(recieved) return recieved = false;
+                        collection.messenger.send('element.update', {
+                            id: model.id,
+                            changed: model.changed
+                        });
+                    });
+
+                    collection.messenger.on('element.add', function(node){
+                        recieved = true;
+                        collection.add(node);
+                    });
+
+                    collection.messenger.on('element.remove', function(node){
+                        recieved = true;
+                        collection.remove(node);
+                    });
+
+                    collection.messenger.on('element.update', function(message){
+                        recieved = true;
+                        collection.get(message.id).set(message.changed);
+                    });
+                }
+            }
         });
-    
-        collection.on('reset', function(collection, changes){
-          // deselect all elements
-          _.each(changes.previousModels, function(element){
-            element.select(false);
-          });
-    
-          // reset selection count
-          collection.state.set('selected_count', 0);
-        });
-        
-        if(collection.messenger){
-          var recieved = false;
-          
-          collection.messenger.on('element.add', function(node){
-            recieved = true;
-            collection.add(node);
-          });
-          
-          collection.messenger.on('element.remove', function(node){
-            recieved = true;
-            collection.remove(node);
-          });
-          
-          collection.on('add', function(model){
-            if(recieved) return recieved = false;
-            collection.messenger.send('element.add', model.attributes)
-          });
-    
-          collection.on('remove', function(model){
-            if(recieved) return recieved = false;
-            collection.messenger.send('element.remove', model.toJSON())
-          });
+    });
+
+    define('ElementListView', ['backbone', 'jquery'], function(Backbone, $){
+        return Backbone.View.extend({
+            initialize: function(){
+                var view = this;
+
+                function eleId(m){ return m.get('id') + '-element' }
+
+                view.collection.on('add', function(m){
+                    var $tag = $('<div>' + m.get('tagName') + '</div>');
+                    $tag.attr('id', eleId(m));
+                    view.$el.append($tag);
+                });
+
+                view.collection.on('remove', function(m){
+                    $('#' + eleId(m)).remove();
+                });
+
+                view.$el.appendTo('body');
+            }
+        })
+    });
+
+    define('Messenger', ['underscore', 'jquery'], function(_, $){
+        function Messenger(params){
+            _.extend(this, {
+                channel: 'global',
+                target: window.opener,
+                subject: window,
+                restrictions: '*'
+            }, params);
         }
-      }
+        Messenger.prototype = {
+            on: function(event, fn){
+                var channel = this.channel;
+                $(this.subject).on('message', function(e){
+                    var message = e.originalEvent.data;
+                    console.log('message recieved\n---\nevent: ' + message.event + '\nchannel: ' + message.channel + '\nlistening: ' + channel + '\ndata:', message.data);
+                    if(message.event != event) return;
+                    if(message.channel != channel) return;
+                    fn(message.data);
+                });
+            },
+            send: function(event, data){
+                console.log('sending:', event, data);
+
+                this.target.postMessage({
+                    channel: this.channel,
+                    event: event,
+                    data: data
+                }, this.restrictions);
+            }
+        };
+        return Messenger;
     });
-  });
-  
-  define('ElementListView', ['backbone', 'jquery'], function(Backbone, $){
-    return Backbone.View.extend({
-      initialize: function(){
-        var view = this;
-        
-        function eleId(m){ return m.get('id') + '-element' }
-        
-        view.collection.on('add', function(m){
-          var $tag = $('<div>' + m.get('tagName') + '</div>');
-          $tag.attr('id', eleId(m));
-          view.$el.append($tag);
-        });
-        
-        view.collection.on('remove', function(m){
-          $('#' + eleId(m)).remove();
-        });
-        
-        view.$el.appendTo('body');
-      }
-    })
-  });
 
-  define('Messenger', ['underscore', 'jquery'], function(_, $){
-    function Messenger(params){
-      _.extend(this, {
-        channel: 'global',
-        target: window.opener,
-        subject: window,
-        restrictions: '*'
-      }, params);
-    }
-    Messenger.prototype = {
-      on: function(event, fn){
-        var channel = this.channel;
-        $(this.subject).on('message', function(e){
-          var message = e.originalEvent.data;
-          console.log('recieved:', message.event, 'channel: ', message.channel, 'listening: ', channel, 'data: ', message.data)
-          if(message.event != event) return;
-          if(message.channel != channel) return;
-          fn(message.data);
-        });
-      },
-      send: function(event, data){
-        console.log('sending:', event, data);
-        
-        this.target.postMessage({
-          channel: this.channel,
-          event: event,
-          data: data
-        }, this.restrictions);
-      }
-    };
-    return Messenger;
-  });
+    define('Client', ['ElementList', 'Messenger', 'ElementListView'], function(ElementList, Messenger, ElementListView){
+        function Client(){
+            var client = this;
 
-  define('Client', ['ElementList', 'Messenger', 'ElementListView'], function(ElementList, Messenger, ElementListView){
-    function Client(){
-      var client = this;
-      
-      var querystr = document.location.search.slice(1);
-      var pairs = querystr.split('&');
-      var query = {};
-      pairs.forEach(function(pair){
-        var tokens = pair.split('=');
-        
-        var key = decodeURIComponent(tokens[0]);
-        var value = decodeURIComponent(tokens[1]);
-        
-        query[key] = value;
-      });
-      
-      client.name = query.name;
-      client.messenger = new Messenger({
-        channel: client.name
-      });
-      
-      client.list = new ElementList([], {
-        messenger: client.messenger
-      });
-      
-      client.view = new ElementListView({
-        collection: client.list
-      });
-    }
-    return Client;
-  });
+            var querystr = document.location.search.slice(1);
+            var pairs = querystr.split('&');
+            var query = {};
+            pairs.forEach(function(pair){
+                var tokens = pair.split('=');
 
-  require(['Client'], function(Client){
-    console.log('starting client...');
-    var client = new Client();
-    
-    client.list.on('all', function(){
-      console.log(arguments);
+                var key = decodeURIComponent(tokens[0]);
+                var value = decodeURIComponent(tokens[1]);
+
+                query[key] = value;
+            });
+
+            client.name = query.name;
+            client.messenger = new Messenger({
+                channel: client.name
+            });
+
+            client.list = new ElementList([], {
+                messenger: client.messenger
+            });
+
+            client.view = new ElementListView({
+                collection: client.list
+            });
+        }
+        return Client;
     });
-  });
-  </script>
+
+    require(['Client'], function(Client){
+        console.log('starting client...');
+        var client = new Client();
+    });
+</script>
 
 </body>
 </html>
