@@ -541,7 +541,9 @@
 
             if(query.type == 'search'){
                 var $search = $('<input class="search" type="text" placeholder="CSS Selector">').appendTo('body');
-                client.messenger.send('find', $search.val());
+                $search.on('keyup', function(){
+                    client.messenger.send('find', $search.val());
+                });
             }
 
             client.view.$el.appendTo('body');
