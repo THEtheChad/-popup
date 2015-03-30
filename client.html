@@ -83,20 +83,31 @@
                 });
 
                 if(collection.messenger){
-                    var recieved = false;
+                    var _recieved = [];
+                    function recieved(model){
+                        var idx = _recieved.indexOf(model.id);
+                        if(idx == -1) _recieved.push(model.id);
+                    }
+                    function wasRecieved(model){
+                        var idx = _recieved.indexOf(model.id);
+                        if(idx == -1) return false;
+
+                        _recieved.splice(idx, 1);
+                        return true;
+                    }
 
                     collection.on('add', function(model){
-                        if(recieved) return recieved = false;
+                        if(wasRecieved(model)) return;
                         collection.messenger.send('element.add', model.attributes)
                     });
 
                     collection.on('remove', function(model){
-                        if(recieved) return recieved = false;
+                        if(wasRecieved(model)) return;
                         collection.messenger.send('element.remove', model.toJSON())
                     });
 
                     collection.on('change', function(model){
-                        if(recieved) return recieved = false;
+                        if(wasRecieved(model)) return;
                         collection.messenger.send('element.update', {
                             id: model.id,
                             changed: model.changed
@@ -104,18 +115,19 @@
                     });
 
                     collection.messenger.on('element.add', function(node){
-                        recieved = true;
+                        recieved(node);
                         collection.add(node);
                     });
 
                     collection.messenger.on('element.remove', function(node){
-                        recieved = true;
+                        recieved(node);
                         collection.remove(node);
                     });
 
                     collection.messenger.on('element.update', function(message){
-                        recieved = true;
-                        collection.get(message.id).set(message.changed);
+                        var model = collection.get(message.id);
+                        recieved(model);
+                        model.set(message.changed);
                     });
                 }
             }
