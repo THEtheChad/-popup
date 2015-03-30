@@ -122,8 +122,8 @@
       on: function(event, fn){
         var identifier = this.identifier;
         $(this.subject).on('message', function(e){
-          console.log('recieved:', message.event, 'from', message.identifier, message.data)
           var message = e.originalEvent.data;
+          console.log('recieved:', message.event, 'from', message.identifier, message.data);
           if(message.event != event) return;
           if(message.identifier != identifier) return;
           fn(message.data);
