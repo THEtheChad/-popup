@@ -4,143 +4,143 @@
     <meta charset="UTF-8">
     <link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <style>
-    *{
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-    }
-    body{
-    overflow-y: scroll;
-    }
-    .widget{
-    padding: 15px;
-    }
-    .fa{
-    color: #777;
-    font-size: 16px;
-    }
-    .fa:hover{
-    color: #333;
-    }
-    .highlight{
-    background: #f1e5ac !important;
-    }
-    #target__search{
-    padding: 5px;
-    }
-    .element-list{
-    margin-top: 5px;
-    }
-    .element-list__controls{
-    padding: 5px;
-    border: 1px solid #ddd;
-    margin-bottom: 4px;
-    }
-    .element-list__controls .control{
-    margin-right: 5px;
-    }
-    .element-list__count{
-    float: right;
-    }
-    .element-list__download{
-    float: right;
-    position: relative;
-    top: 2px;
-    cursor: pointer;
-    }
-    .element-list__elements{
-    }
-    .element-list__elements .element{
-    margin-bottom: 4px;
-    }
-    .element{
-    position: relative;
-    padding: 5px;
-    border: 1px solid #ccc;
-    background: #CACFCF;
-    opacity: .8;
-    }
-    .element__tag-name,
-    .element__class,
-    .element__id{
-    padding: 2px 8px 4px;
-    text-transform: lowercase;
-    color: #fff;
-    display: inline-block;
-    margin-right: 2px;
-    margin-bottom: 4px;
-    cursor: pointer;
-    transition: all .5s;
-    }
-    .element__tag-name{
-    background: #9BB4B4;
-    }
-    .element__tag-name:hover{
-    background: #5e7d7d;
-    }
-    .element__class{
-    background: #C9B07D;
-    }
-    .element__class:hover{
-    background: #7a6333;
-    }
-    .element__id{
-    background: #C97D7D;
-    }
-    .element__id:hover{
-    background: #893939;
-    }
-    .element:hover{
-    opacity: 1;
-    }
-    .element__selected{
-    margin-right: 5px;
-    cursor: pointer;
-    }
-    .element-list__select-all{
-    cursor: pointer;
-    }
-    .element__tag-ui{
-    margin-top: 4px;
-    margin-bottom: -4px;
-    }
-    .element__data{
-    width: 120px;
-    padding: 4px;
-    display: inline-block;
-    vertical-align: middle;
-    }
-    .element-inputs{
-    margin-top: 20px;
-    }
-    .element-inputs input{
-    background: none;
-    border: none;
-    position: relative;
-    }
-    .element-inputs input:hover,
-    .element-inputs input:focus{
-    outline: 1px solid #aaa;
-    background: #ddd;
-    z-index: 1;
-    }
-    .element-inputs:focus{
-    outline: 0;
-    }
-    .element-inputs label{
-    display: inline-block;
-    width: 80px;
-    }
-    .element__controls{
-    position: absolute;
-    right: 0;
-    }
-    .element__control:hover{
-    cursor: pointer;
-    }
-    .element__controls .element__control{
-    margin-right: 5px;
-    }
+        *{
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        body{
+            overflow-y: scroll;
+        }
+        .widget{
+            padding: 15px;
+        }
+        .fa{
+            color: #777;
+            font-size: 16px;
+        }
+        .fa:hover{
+            color: #333;
+        }
+        .highlight{
+            background: #f1e5ac !important;
+        }
+        #target__search{
+            padding: 5px;
+        }
+        .element-list{
+            margin-top: 5px;
+        }
+        .element-list__controls{
+            padding: 5px;
+            border: 1px solid #ddd;
+            margin-bottom: 4px;
+        }
+        .element-list__controls .control{
+            margin-right: 5px;
+        }
+        .element-list__count{
+            float: right;
+        }
+        .element-list__download{
+            float: right;
+            position: relative;
+            top: 2px;
+            cursor: pointer;
+        }
+        .element-list__elements{
+        }
+        .element-list__elements .element{
+            margin-bottom: 4px;
+        }
+        .element{
+            position: relative;
+            padding: 5px;
+            border: 1px solid #ccc;
+            background: #CACFCF;
+            opacity: .8;
+        }
+        .element__tag-name,
+        .element__class,
+        .element__id{
+            padding: 2px 8px 4px;
+            text-transform: lowercase;
+            color: #fff;
+            display: inline-block;
+            margin-right: 2px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            transition: all .5s;
+        }
+        .element__tag-name{
+            background: #9BB4B4;
+        }
+        .element__tag-name:hover{
+            background: #5e7d7d;
+        }
+        .element__class{
+            background: #C9B07D;
+        }
+        .element__class:hover{
+            background: #7a6333;
+        }
+        .element__id{
+            background: #C97D7D;
+        }
+        .element__id:hover{
+            background: #893939;
+        }
+        .element:hover{
+            opacity: 1;
+        }
+        .element__selected{
+            margin-right: 5px;
+            cursor: pointer;
+        }
+        .element-list__select-all{
+            cursor: pointer;
+        }
+        .element__tag-ui{
+            margin-top: 4px;
+            margin-bottom: -4px;
+        }
+        .element__data{
+            width: 120px;
+            padding: 4px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .element-inputs{
+            margin-top: 20px;
+        }
+        .element-inputs input{
+            background: none;
+            border: none;
+            position: relative;
+        }
+        .element-inputs input:hover,
+        .element-inputs input:focus{
+            outline: 1px solid #aaa;
+            background: #ddd;
+            z-index: 1;
+        }
+        .element-inputs:focus{
+            outline: 0;
+        }
+        .element-inputs label{
+            display: inline-block;
+            width: 80px;
+        }
+        .element__controls{
+            position: absolute;
+            right: 0;
+        }
+        .element__control:hover{
+            cursor: pointer;
+        }
+        .element__controls .element__control{
+            margin-right: 5px;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.16/require.min.js"></script>
 </head>
@@ -277,21 +277,21 @@
     define('Messenger', ['underscore', 'jquery'], function(_, $){
         function Messenger(params){
             var messenger = this;
-            
+
             _.extend(messenger, {
                 channel: 'global',
                 target: window.opener,
                 subject: window,
                 restrictions: '*'
             }, params);
-            
+
             if(messenger.debug){
-                console.log('Creating messenger...');
+                console.groupCollapsed('Creating messenger...');
                 console.log('channel: ', messenger.channel);
                 console.log('target: ', messenger.target);
                 console.log('subject: ', messenger.subject);
                 console.log('restrictions: ', messenger.restrictions);
-                console.log('');
+                console.groupEnd();
             }
         }
         Messenger.prototype = {
@@ -303,11 +303,11 @@
                     if(message.event != event) return;
                     if(message.channel != channel) return;
                     if(messenger.debug){
-                        console.log('Message recieved!');
+                        console.groupCollapsed('Message recieved!');
                         console.log('event: ', message.event);
                         console.log('channel: ', message.channel);
                         console.log('data: ', message.data);
-                        console.log('');
+                        console.groupEnd();
                     }
                     fn(message.data);
                 });
@@ -330,183 +330,183 @@
 
     define('ElementView', ['jquery', 'backbone'], function($, Backbone){
         return Backbone.View.extend({
-          className: 'element',
-        
-          initialize: function(){
-            var view = this;
-        
-            view.listenTo(this.model, 'change:selected', function(m, state){
-              this.$select.toggleClass('fa-eye-slash', !state);
-              this.$select.toggleClass('fa-eye', state);
-        
-              this.highlight(state);
-            });
-        
-            view.$controls = $('<div class="element__controls"></div>');
-            view.$select = $('<i class="fa fa-eye-slash element__selected element__control"></i>').appendTo(view.$controls);
-            view.$save = $('<i class="fa fa-floppy-o element__control"></i>').appendTo(view.$controls);
-        
-            view.$inputs = $('<div class="element-inputs"></div>');
-        
-            view.$nameQuery = $('<div class="element-inputs__name"><label>Name</label></div>').appendTo(view.$inputs);
-            view.$name = $('<input class="element__name element__data" type="text" placeholder="unknown">').appendTo(view.$nameQuery);
-        
-            view.bind(view.$name, 'name');
-        
-            view.$selectorQuery = $('<div class="element-inputs__name"><label>Selector</label></div>').appendTo(view.$inputs);
-            view.$selector = $('<span class="element__selector element__data"></span>').appendTo(view.$selectorQuery);
-        
-            view.$selector.html(view.model.get('selector'));
-        
-            view.$preferredQuery = $('<div class="element-inputs__name"><label>Preferred</label></div>').appendTo(view.$inputs);
-            view.$preferred = $('<span class="element__preferred element__data">unavailable</span>').appendTo(view.$preferredQuery);
-        
-            view.$preferred.html(view.model.get('preferred'));
-        
-            view.$tagui = $('<div class="element__tag-ui"></div>');
-        
-            view.$tag = view.model.get('tagName') && $('<div class="element__tag-name">' + view.model.get('tagName') + '</div>').appendTo(view.$tagui);
-            view.$id = view.model.get('tagId') && $('<div class="element__id">#' + view.model.get('tagId') + '</div>').appendTo(view.$tagui);
-        
-            var classes = view.model.get('classNames');
-            if(classes.length){
-              view.$classes = $.map(classes, function(className){
-                return $('<div class="element__class">.' + className + '</div>');
-              });
-              view.$tagui.append(view.$classes);
-            }
-        
-            view.$el
-              .append(view.$controls)
-              .append(view.$inputs)
-              .append(view.$tagui)
-              .on('mouseenter', function(){
-                view.highlight(true)
-              })
-              .on('mouseleave', function(){
-                view.highlight(false)
-              });
-          },
-          events: {
-            'click .element__selected': 'select',
-            'click .element__class': function(e){
-              this.triggerSelector('class', this.$(e.target).html())
+            className: 'element',
+
+            initialize: function(){
+                var view = this;
+
+                view.listenTo(this.model, 'change:selected', function(m, state){
+                    this.$select.toggleClass('fa-eye-slash', !state);
+                    this.$select.toggleClass('fa-eye', state);
+
+                    this.highlight(state);
+                });
+
+                view.$controls = $('<div class="element__controls"></div>');
+                view.$select = $('<i class="fa fa-eye-slash element__selected element__control"></i>').appendTo(view.$controls);
+                view.$save = $('<i class="fa fa-floppy-o element__control"></i>').appendTo(view.$controls);
+
+                view.$inputs = $('<div class="element-inputs"></div>');
+
+                view.$nameQuery = $('<div class="element-inputs__name"><label>Name</label></div>').appendTo(view.$inputs);
+                view.$name = $('<input class="element__name element__data" type="text" placeholder="unknown">').appendTo(view.$nameQuery);
+
+                view.bind(view.$name, 'name');
+
+                view.$selectorQuery = $('<div class="element-inputs__name"><label>Selector</label></div>').appendTo(view.$inputs);
+                view.$selector = $('<span class="element__selector element__data"></span>').appendTo(view.$selectorQuery);
+
+                view.$selector.html(view.model.get('selector'));
+
+                view.$preferredQuery = $('<div class="element-inputs__name"><label>Preferred</label></div>').appendTo(view.$inputs);
+                view.$preferred = $('<span class="element__preferred element__data">unavailable</span>').appendTo(view.$preferredQuery);
+
+                view.$preferred.html(view.model.get('preferred'));
+
+                view.$tagui = $('<div class="element__tag-ui"></div>');
+
+                view.$tag = view.model.get('tagName') && $('<div class="element__tag-name">' + view.model.get('tagName') + '</div>').appendTo(view.$tagui);
+                view.$id = view.model.get('tagId') && $('<div class="element__id">#' + view.model.get('tagId') + '</div>').appendTo(view.$tagui);
+
+                var classes = view.model.get('classNames');
+                if(classes.length){
+                    view.$classes = $.map(classes, function(className){
+                        return $('<div class="element__class">.' + className + '</div>');
+                    });
+                    view.$tagui.append(view.$classes);
+                }
+
+                view.$el
+                        .append(view.$controls)
+                        .append(view.$inputs)
+                        .append(view.$tagui)
+                        .on('mouseenter', function(){
+                            view.highlight(true)
+                        })
+                        .on('mouseleave', function(){
+                            view.highlight(false)
+                        });
             },
-            'click .element__id': function(e){
-              this.triggerSelector('id', this.$(e.target).html())
+            events: {
+                'click .element__selected': 'select',
+                'click .element__class': function(e){
+                    this.triggerSelector('class', this.$(e.target).html())
+                },
+                'click .element__id': function(e){
+                    this.triggerSelector('id', this.$(e.target).html())
+                },
+                'click .element__tag-name': function(e){
+                    this.triggerSelector('tagName', this.$(e.target).html())
+                }
             },
-            'click .element__tag-name': function(e){
-              this.triggerSelector('tagName', this.$(e.target).html())
+            triggerSelector: function(selector_type, selector){
+                var model = this.model;
+                var changes = {};
+
+                changes[selector_type] = selector;
+
+                model.trigger('selector:' + selector_type, model, selector);
+                model.trigger('selector', model, changes);
+            },
+            highlight: function(state, backbone_state){
+                if(_.isBoolean(backbone_state)) state = backbone_state;
+
+                this.model.highlight(state);
+            },
+            select: function(state, backbone_state){
+                if(state && state.type == 'click') state = undefined;
+                else
+                if(_.isBoolean(backbone_state)) state = backbone_state;
+
+                this.model.select(state);
+            },
+            bind: function($ele, prop){
+                var model = this.model;
+                function bind(m, value){ $ele.val(value) }
+
+                bind(model, model.get(prop));
+                model.on('change:' + prop, bind);
+
+                $ele.keyup(function(){
+                    model.set(prop, $ele.val());
+                });
             }
-          },
-          triggerSelector: function(selector_type, selector){
-              var model = this.model;
-              var changes = {};
-        
-              changes[selector_type] = selector;
-        
-              model.trigger('selector:' + selector_type, model, selector);
-              model.trigger('selector', model, changes);
-          },
-          highlight: function(state, backbone_state){
-            if(_.isBoolean(backbone_state)) state = backbone_state;
-        
-            this.model.highlight(state);
-          },
-          select: function(state, backbone_state){
-            if(state && state.type == 'click') state = undefined;
-            else
-            if(_.isBoolean(backbone_state)) state = backbone_state;
-        
-            this.model.select(state);
-          },
-          bind: function($ele, prop){
-            var model = this.model;
-            function bind(m, value){ $ele.val(value) }
-        
-            bind(model, model.get(prop));
-            model.on('change:' + prop, bind);
-        
-            $ele.keyup(function(){
-              model.set(prop, $ele.val());
-            });
-          }
         });
     });
-    
+
     define('ElementListView', ['backbone', 'ElementView', 'jquery'], function(Backbone, ElementView, $){
         return Backbone.View.extend({
-          className: 'element-list',
-          initialize: function(attrs){
-            var view = this;
-        
-            view.$el.addClass(this.className);
-        
-            // add controls
-            view.$controls = $('<div class="element-list__controls"></div>');
-            view.$select_all = $('<i class="element-list__select-all control fa fa-eye-slash"></i>').appendTo(view.$controls);
-            view.$selected_count = $('<span class="element-list__selected-count">0</span>').appendTo(view.$controls);
-            // <input class="element-list__select-all control" type="checkbox">
-            view.$count =  $('<span class="element-list__count">0</span>').appendTo(view.$controls);
-        
-            if(attrs.download){
-              view.$download = $('<i class="element-list__download control fa fa-download"></i>').appendTo(view.$controls);
-        
-              view.$download.click(function(){
-                var csv = view.collection.toCsv();
-        
-                console.log(csv);
-              });
+            className: 'element-list',
+            initialize: function(attrs){
+                var view = this;
+
+                view.$el.addClass(this.className);
+
+                // add controls
+                view.$controls = $('<div class="element-list__controls"></div>');
+                view.$select_all = $('<i class="element-list__select-all control fa fa-eye-slash"></i>').appendTo(view.$controls);
+                view.$selected_count = $('<span class="element-list__selected-count">0</span>').appendTo(view.$controls);
+                // <input class="element-list__select-all control" type="checkbox">
+                view.$count =  $('<span class="element-list__count">0</span>').appendTo(view.$controls);
+
+                if(attrs.download){
+                    view.$download = $('<i class="element-list__download control fa fa-download"></i>').appendTo(view.$controls);
+
+                    view.$download.click(function(){
+                        var csv = view.collection.toCsv();
+
+                        console.log(csv);
+                    });
+                }
+
+                view.$controls.appendTo(view.$el);
+
+                // add list
+                view.$list = $('<div class="element-list__elements"></div>').appendTo(view.$el);
+
+                // ## EVENTS
+
+                view.$select_all.click(function(){
+                    var selected = !view.$select_all.hasClass('fa-eye');
+
+                    view.collection.each(function(m){
+                        m.select(selected);
+                    });
+                });
+
+                view.collection.state.on('change:selected_count', function(state, count){
+                    view.$selected_count.html(count);
+
+                    var state = (count == view.collection.length);
+
+                    view.$select_all.toggleClass('fa-eye-slash', !state);
+                    view.$select_all.toggleClass('fa-eye', state);
+                });
+
+                view.collection.on('add', function(m){
+                    var eView = new ElementView({ model: m});
+                    m.view = eView;
+
+                    eView.$el.appendTo(view.$list);
+
+                    view.$count.html(view.collection.length);
+                });
+
+                view.collection.on('remove', function(m){
+                    var eView = m.view;
+                    eView.$el.remove();
+
+                    view.$count.html(view.collection.length);
+                });
+
+                view.collection.on('reset', function(){
+                    view.$list.html('');
+
+                    view.$count.html(view.collection.length);
+                });
             }
-        
-            view.$controls.appendTo(view.$el);
-        
-            // add list
-            view.$list = $('<div class="element-list__elements"></div>').appendTo(view.$el);
-        
-            // ## EVENTS
-        
-            view.$select_all.click(function(){
-              var selected = !view.$select_all.hasClass('fa-eye');
-        
-              view.collection.each(function(m){
-                m.select(selected);
-              });
-            });
-        
-            view.collection.state.on('change:selected_count', function(state, count){
-              view.$selected_count.html(count);
-        
-              var state = (count == view.collection.length);
-        
-              view.$select_all.toggleClass('fa-eye-slash', !state);
-              view.$select_all.toggleClass('fa-eye', state);
-            });
-        
-            view.collection.on('add', function(m){
-              var eView = new ElementView({ model: m});
-              m.view = eView;
-        
-              eView.$el.appendTo(view.$list);
-        
-              view.$count.html(view.collection.length);
-            });
-        
-            view.collection.on('remove', function(m){
-              var eView = m.view;
-              eView.$el.remove();
-        
-              view.$count.html(view.collection.length);
-            });
-        
-            view.collection.on('reset', function(){
-              view.$list.html('');
-        
-              view.$count.html(view.collection.length);
-            });
-          }
         });
-    });  
+    });
 
     define('Client', ['ElementList', 'Messenger', 'ElementListView'], function(ElementList, Messenger, ElementListView){
         function Client(){
@@ -537,6 +537,8 @@
             client.view = new ElementListView({
                 collection: client.list
             });
+
+            client.view.$el.appendTo('body');
         }
         return Client;
     });
