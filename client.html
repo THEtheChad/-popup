@@ -284,6 +284,18 @@
                     });
                 }
             }
+            fromCSV: function(csv){
+                var rows = csv.split('\n');
+                var header = rows.shift();
+                var collection = this;
+                _.each(rows, function(row){
+                    var cols = row.split(',');
+                    collection.add({
+                        name: cols[0],
+                        selector: cols[1]
+                    });
+                });
+            }
         });
     });
 
@@ -523,18 +535,6 @@
                     view.$list.html('');
 
                     view.$count.html(view.collection.length);
-                });
-            },
-            fromCSV: function(csv){
-                var rows = csv.split('\n');
-                var header = rows.shift();
-                var collection = this;
-                _.each(rows, function(row){
-                    var cols = row.split(',');
-                    collection.add({
-                        name: cols[0],
-                        selector: cols[1]
-                    });
                 });
             }
         });
