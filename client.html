@@ -2,6 +2,146 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <style>
+    *{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    }
+    body{
+    overflow-y: scroll;
+    }
+    .widget{
+    padding: 15px;
+    }
+    .fa{
+    color: #777;
+    font-size: 16px;
+    }
+    .fa:hover{
+    color: #333;
+    }
+    .highlight{
+    background: #f1e5ac !important;
+    }
+    #target__search{
+    padding: 5px;
+    }
+    .element-list{
+    margin-top: 5px;
+    }
+    .element-list__controls{
+    padding: 5px;
+    border: 1px solid #ddd;
+    margin-bottom: 4px;
+    }
+    .element-list__controls .control{
+    margin-right: 5px;
+    }
+    .element-list__count{
+    float: right;
+    }
+    .element-list__download{
+    float: right;
+    position: relative;
+    top: 2px;
+    cursor: pointer;
+    }
+    .element-list__elements{
+    }
+    .element-list__elements .element{
+    margin-bottom: 4px;
+    }
+    .element{
+    position: relative;
+    padding: 5px;
+    border: 1px solid #ccc;
+    background: #CACFCF;
+    opacity: .8;
+    }
+    .element__tag-name,
+    .element__class,
+    .element__id{
+    padding: 2px 8px 4px;
+    text-transform: lowercase;
+    color: #fff;
+    display: inline-block;
+    margin-right: 2px;
+    margin-bottom: 4px;
+    cursor: pointer;
+    transition: all .5s;
+    }
+    .element__tag-name{
+    background: #9BB4B4;
+    }
+    .element__tag-name:hover{
+    background: #5e7d7d;
+    }
+    .element__class{
+    background: #C9B07D;
+    }
+    .element__class:hover{
+    background: #7a6333;
+    }
+    .element__id{
+    background: #C97D7D;
+    }
+    .element__id:hover{
+    background: #893939;
+    }
+    .element:hover{
+    opacity: 1;
+    }
+    .element__selected{
+    margin-right: 5px;
+    cursor: pointer;
+    }
+    .element-list__select-all{
+    cursor: pointer;
+    }
+    .element__tag-ui{
+    margin-top: 4px;
+    margin-bottom: -4px;
+    }
+    .element__data{
+    width: 120px;
+    padding: 4px;
+    display: inline-block;
+    vertical-align: middle;
+    }
+    .element-inputs{
+    margin-top: 20px;
+    }
+    .element-inputs input{
+    background: none;
+    border: none;
+    position: relative;
+    }
+    .element-inputs input:hover,
+    .element-inputs input:focus{
+    outline: 1px solid #aaa;
+    background: #ddd;
+    z-index: 1;
+    }
+    .element-inputs:focus{
+    outline: 0;
+    }
+    .element-inputs label{
+    display: inline-block;
+    width: 80px;
+    }
+    .element__controls{
+    position: absolute;
+    right: 0;
+    }
+    .element__control:hover{
+    cursor: pointer;
+    }
+    .element__controls .element__control{
+    margin-right: 5px;
+    }
+    </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.16/require.min.js"></script>
 </head>
 <body>
