@@ -189,9 +189,6 @@
             initialize: function(attrs){
                 var element = this;
             },
-            sync: function(){
-                console.log(this, arguments)
-            },
             select: function(state){
                 if(state == undefined) state = !this.get('selected');
 
@@ -202,15 +199,6 @@
                 if(this.get('selected') == true) state = true;
 
                 this.set('highlighted', state);
-            },
-            toCsv: function(){
-                var record = [];
-
-                record.push(this.get('name'));
-                record.push(this.get('preferred'));
-                record.push(this.get('comment'));
-
-                return record.join(',');
             }
         });
     });
@@ -295,9 +283,6 @@
                         collection.messenger.send('goto', model.id);
                     });
                 }
-            },
-            toCSV: function(){
-
             }
         });
     });
@@ -412,15 +397,15 @@
                 }
 
                 view.$el
-                        .append(view.$controls)
-                        .append(view.$inputs)
-                        .append(view.$tagui)
-                        .on('mouseenter', function(){
-                            view.highlight(true)
-                        })
-                        .on('mouseleave', function(){
-                            view.highlight(false)
-                        });
+                    .append(view.$controls)
+                    .append(view.$inputs)
+                    .append(view.$tagui)
+                    .on('mouseenter', function(){
+                        view.highlight(true)
+                    })
+                    .on('mouseleave', function(){
+                        view.highlight(false)
+                    });
             },
             events: {
                 'click .element__selected': 'select',
@@ -539,11 +524,23 @@
 
                     view.$count.html(view.collection.length);
                 });
+            },
+            fromCSV: function(csv){
+                var rows = csv.split('\n');
+                var header = rows.shift();
+                var collection = this;
+                _.each(rows, function(row){
+                    var cols = row.split(',');
+                    collection.add({
+                        name: cols[0],
+                        selector: cols[1]
+                    });
+                });
             }
         });
     });
 
-    define('Widget', ['backbone', 'ElementList', 'Messenger', 'ElementListView', 'jquery'], function(Backbone, ElementList, Messenger, ElementListView, $){
+    define('Widget', ['underscore', 'backbone', 'ElementList', 'Messenger', 'ElementListView', 'jquery'], function(_, Backbone, ElementList, Messenger, ElementListView, $){
         return Backbone.View.extend({
             className: 'widget',
             initialize: function(opts){
@@ -555,6 +552,7 @@
                 });
 
                 if(opts.type == 'search') view.search();
+                if(opts.type == 'fromFile') view.fromFile();
 
                 view.element_list = new ElementListView({
                     collection: view.collection
@@ -577,6 +575,21 @@
                     for(var k in list) selectors.push(list[k])
                     $search.val(selectors.join('')).triggerHandler('keyup');
                 });
+            },
+            fromFile: function(){
+                var view = this;
+
+                var $upload = $('<input class="file-upload" type="file">')
+                    .change(function(e){
+                        _.each(this.files, function(file){
+                            var reader = new FileReader();
+                            reader.onload = function(e){
+                                var csv = e.target.result;
+                                view.collection.fromCsv(csv);
+                            };
+                            reader.readAsText(file);
+                        });
+                    });
             }
         });
     });
@@ -602,13 +615,11 @@
                 channel: client.name
             });
 
-            if(query.type == 'search'){
-                new Widget({
-                    type: 'search',
-                    target: 'body',
-                    messenger: client.messenger
-                });
-            }
+            new Widget({
+                type: query.type,
+                target: 'body',
+                messenger: client.messenger
+            });
         }
         return Client;
     });
