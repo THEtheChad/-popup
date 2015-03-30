@@ -545,6 +545,12 @@
                 $search.on('keyup', function(){
                     client.messenger.send('find', $search.val());
                 });
+
+                client.list.on('selector', function(m, list){
+                    var selectors = [];
+                    for(var k in list) selectors.push(list[k])
+                    $search.val(selectors.join('')).triggerHandler('keyup');
+                });
             }
 
             client.view.$el.appendTo('body');
